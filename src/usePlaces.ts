@@ -12,6 +12,16 @@ export function usePlaces(query: string): RequestState<readonly Place[], ApiErro
     useEffect(()=>{
 
 
+
+        if(!query.trim()){
+
+     setState({status: 'idle'})
+     return
+
+
+        }
+
+
         const controller =new AbortController()
 
  
