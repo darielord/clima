@@ -21,7 +21,4 @@ export async function   fetchWeather(latitude:number, longitude: number, signal:
 }
 
 
-const abort = new AbortController()
-
-const Weather = await fetchWeather(18.47, -69.9, abort.signal)
-console.log(Weather)
+ 
