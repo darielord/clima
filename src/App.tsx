@@ -2,6 +2,9 @@
 import { useState, type ReactNode } from "react";
 import { usePlaces } from "./usePlaces";
 import { useDebounce } from "./useDebounce";
+import { type Place } from "./types";
+
+import { useWeather } from "./useWeather";
 
 export function App(){
 
@@ -11,6 +14,10 @@ const debouncedText = useDebounce(text, 500)
 const state =usePlaces(debouncedText)
 
  
+
+const [selectedPlace, setSelectedPlace] = useState<Place | null> (null)
+
+ const weather = useWeather(selectedPlace)
 
 let content: ReactNode
 
@@ -30,7 +37,8 @@ case 'success':
 if(state.data.length === 0){
     content = <p> {'sin resultados'} </p>
 }else{
-   content =  <ul> {state.data.map((el)=> <li key={el.id }>{el.name}</li>)} </ul>
+   content =  <ul> {state.data.map((el)=> <li key={el.id }>   <button onClick={()=> setSelectedPlace(el)}>{el.name} </button></li>)} </ul>
+ 
 }
 break;
  }
@@ -40,6 +48,7 @@ return (
 
         <input value={text}  onChange={(e)=> setText(e.target.value)}/> 
  {content}
+    <pre> {JSON.stringify(weather, null, 2)} </pre>
  
     </div>
 )
