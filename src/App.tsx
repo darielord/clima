@@ -1,12 +1,16 @@
  
 import { useState, type ReactNode } from "react";
 import { usePlaces } from "./usePlaces";
+import { useDebounce } from "./useDebounce";
 
 export function App(){
 
 const [text, setText] = useState('')
+const debouncedText = useDebounce(text, 500)
 
-const state =usePlaces(text)
+const state =usePlaces(debouncedText)
+
+ 
 
 let content: ReactNode
 
