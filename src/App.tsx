@@ -1,58 +1,58 @@
- 
 import { useState, type ReactNode } from "react";
 import { usePlaces } from "./usePlaces";
 import { useDebounce } from "./useDebounce";
 import { type Place } from "./types";
+import { renderWeather } from "./renderWeather";
 
 import { useWeather } from "./useWeather";
 
-export function App(){
+export function App() {
+  const [text, setText] = useState("");
+  const debouncedText = useDebounce(text, 500);
 
-const [text, setText] = useState('')
-const debouncedText = useDebounce(text, 500)
+  const state = usePlaces(debouncedText);
 
-const state =usePlaces(debouncedText)
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
- 
+  const weather = useWeather(selectedPlace);
 
-const [selectedPlace, setSelectedPlace] = useState<Place | null> (null)
+  let content: ReactNode;
 
- const weather = useWeather(selectedPlace)
+  switch (state.status) {
+    case "idle":
+      content = <p>{"Escribe ciudad"}</p>;
+      break;
+    case "loading":
+      content = <p> {"Buscando..."} </p>;
+      break;
+    case "error":
+      content = <p> {"error algo fallo"} </p>;
 
-let content: ReactNode
+      break;
+    case "success":
+      if (state.data.length === 0) {
+        content = <p> {"sin resultados"} </p>;
+      } else {
+        content = (
+          <ul>
+            {state.data.map((el) => (
+              <li key={el.id}>
+                <button onClick={() => setSelectedPlace(el)}>{el.name} </button>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+      break;
+  }
 
- switch (state.status) {
-    case 'idle':
-         content =  <p>{'Escribe ciudad'}</p>
-        break;
- case 'loading':
- content = <p> {'Buscando...'} </p>
-     break;
- case 'error':
-    content = <p> {'error algo fallo'} </p>
-    
-        break;
-case 'success': 
- 
-if(state.data.length === 0){
-    content = <p> {'sin resultados'} </p>
-}else{
-   content =  <ul> {state.data.map((el)=> <li key={el.id }>   <button onClick={()=> setSelectedPlace(el)}>{el.name} </button></li>)} </ul>
- 
-}
-break;
- }
-
-return ( 
+  return (
     <div className="App">
-
-        <input value={text}  onChange={(e)=> setText(e.target.value)}/> 
- {content}
-    <pre> {JSON.stringify(weather, null, 2)} </pre>
- 
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      {content}
+      {renderWeather(weather)}
     </div>
-)
-
+  );
 }
 
-export default App
+export default App;
