@@ -3,12 +3,15 @@ import { usePlaces } from "./usePlaces";
 import { useDebounce } from "./useDebounce";
 import { type Place } from "./types";
 import { renderWeather } from "./renderWeather";
+import { type Unit } from "./units";
 
 import { useWeather } from "./useWeather";
 
 export function App() {
   const [text, setText] = useState("");
   const debouncedText = useDebounce(text, 500);
+
+  const [unit, setUnit] = useState<Unit>("C");
 
   const state = usePlaces(debouncedText);
 
@@ -49,8 +52,11 @@ export function App() {
   return (
     <div className="App">
       <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={() => setUnit(unit === "C" ? "F" : "C")}>
+        Cambiar a {unit === "C" ? "F" : "C"}{" "}
+      </button>
       {content}
-      {renderWeather(weather)}
+      {renderWeather(weather, unit)}
     </div>
   );
 }

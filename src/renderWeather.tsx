@@ -1,12 +1,14 @@
 import { type RequestState } from "./types";
 import { describeWeather } from "./weatherKind";
-
+import type { Unit } from "./units";
 import { type CurrentWeather } from "./types";
 import { type ApiError } from "./types";
 import { type ReactNode } from "react";
+import { convertTemperature } from "./units";
 
 export function renderWeather(
   render: RequestState<CurrentWeather, ApiError>,
+  unit: Unit,
 ): ReactNode {
   const state = render;
 
@@ -20,10 +22,14 @@ export function renderWeather(
     case "success":
       return (
         <div className="clima">
-          <p>Temperatura:{state.data.temperature_2m} °C</p>
           <p> Humedad: {state.data.relative_humidity_2m}%</p>
           <p> Viento: {state.data.wind_speed_10m}km/h</p>{" "}
-          <p> Clima: {describeWeather(state.data.weather_code)}</p>
+          <p> clima: {describeWeather(state.data.weather_code)}</p>
+          <p>
+            {" "}
+            Temperatura:{convertTemperature(state.data.temperature_2m, unit)}°
+            {unit}
+          </p>
         </div>
       );
     case "error":
