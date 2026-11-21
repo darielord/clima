@@ -5,6 +5,7 @@ import { type ApiError } from "./types";
 import { type ReactNode } from "react";
 import { convertTemperature } from "./units";
 import type { DayForecast } from "./days";
+import { errorMessage } from "./errorMessage";
 
 export function renderForecast(
   render: RequestState<readonly DayForecast[], ApiError>,
@@ -36,7 +37,7 @@ export function renderForecast(
         </div>
       );
     case "error":
-      return <p>{"Error"} </p>;
+      return <p>{errorMessage(state.error)} </p>;
     default:
       const def: never = state;
       throw new Error(def);
