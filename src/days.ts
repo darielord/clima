@@ -5,6 +5,10 @@ export type DailyForecast = {
   readonly temperature_2m_min: readonly number[];
 };
 
+export type DailyReply = {
+  readonly daily: DailyForecast;
+};
+
 export type DayForecast = {
   readonly date: string;
   readonly code: number;
