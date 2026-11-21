@@ -7,6 +7,10 @@ import { type Unit } from "./units";
 
 import { useWeather } from "./useWeather";
 
+import { useForecast } from "./useForecast";
+import { renderForecast } from "./renderForecast";
+import { errorMessage } from "./errorMessage";
+
 export function App() {
   const [text, setText] = useState("");
   const debouncedText = useDebounce(text, 500);
@@ -19,6 +23,8 @@ export function App() {
 
   const weather = useWeather(selectedPlace);
 
+  const forecast = useForecast(selectedPlace);
+
   let content: ReactNode;
 
   switch (state.status) {
@@ -29,7 +35,7 @@ export function App() {
       content = <p> {"Buscando..."} </p>;
       break;
     case "error":
-      content = <p> {"error algo fallo"} </p>;
+      content = <p> {errorMessage(state.error)} </p>;
 
       break;
     case "success":
@@ -57,6 +63,7 @@ export function App() {
       </button>
       {content}
       {renderWeather(weather, unit)}
+      {renderForecast(forecast, unit)}
     </div>
   );
 }

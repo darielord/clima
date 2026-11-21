@@ -5,6 +5,7 @@ import { type CurrentWeather } from "./types";
 import { type ApiError } from "./types";
 import { type ReactNode } from "react";
 import { convertTemperature } from "./units";
+import { errorMessage } from "./errorMessage";
 
 export function renderWeather(
   render: RequestState<CurrentWeather, ApiError>,
@@ -33,7 +34,7 @@ export function renderWeather(
         </div>
       );
     case "error":
-      return <p>{"Error"} </p>;
+      return <p>{errorMessage(state.error)} </p>;
     default:
       const def: never = state;
       throw new Error(def);
