@@ -4,12 +4,15 @@ import { useDebounce } from "./useDebounce";
 import { type Place } from "./types";
 import { renderWeather } from "./renderWeather";
 import { type Unit } from "./units";
-
+import { loadHistory, loadLastPlace } from "./storage";
+import { saveHistory } from "./storage";
+import { saveLastPlace } from "./storage";
 import { useWeather } from "./useWeather";
 
 import { useForecast } from "./useForecast";
 import { renderForecast } from "./renderForecast";
 import { errorMessage } from "./errorMessage";
+import { addToHistory } from "./history";
 
 export function App() {
   const [text, setText] = useState("");
@@ -19,7 +22,22 @@ export function App() {
 
   const state = usePlaces(debouncedText);
 
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(() =>
+    loadLastPlace(),
+  );
+
+  const [history, setHistory] = useState<readonly Place[]>(() => loadHistory());
+
+  function choosePlace(place: Place) {
+    const updated = addToHistory(history, place);
+
+    saveHistory(updated);
+
+    setHistory(updated);
+
+    saveLastPlace(place);
+    setSelectedPlace(place);
+  }
 
   const weather = useWeather(selectedPlace);
 
@@ -46,7 +64,13 @@ export function App() {
           <ul>
             {state.data.map((el) => (
               <li key={el.id}>
-                <button onClick={() => setSelectedPlace(el)}>{el.name} </button>
+                <button
+                  onClick={() => {
+                    choosePlace(el);
+                  }}
+                >
+                  {el.name}{" "}
+                </button>
               </li>
             ))}
           </ul>
@@ -64,6 +88,16 @@ export function App() {
       {content}
       {renderWeather(weather, unit)}
       {renderForecast(forecast, unit)}
+
+      <h3>Recientes</h3>
+      <ul>
+        {history.map((item) => (
+          <li key={item.id}>
+            {" "}
+            <button onClick={() => choosePlace(item)}>{item.name} </button>{" "}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
