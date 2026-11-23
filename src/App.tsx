@@ -8,6 +8,7 @@ import { loadHistory, loadLastPlace } from "./storage";
 import { saveHistory } from "./storage";
 import { saveLastPlace } from "./storage";
 import { useWeather } from "./useWeather";
+import { WeatherCanvas } from "./WeatherCanvas";
 
 import { useForecast } from "./useForecast";
 import { renderForecast } from "./renderForecast";
@@ -81,6 +82,7 @@ export function App() {
 
   return (
     <div className="App">
+      <WeatherCanvas />
       <input value={text} onChange={(e) => setText(e.target.value)} />
       <button onClick={() => setUnit(unit === "C" ? "F" : "C")}>
         Cambiar a {unit === "C" ? "F" : "C"}{" "}
