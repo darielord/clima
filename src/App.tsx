@@ -9,12 +9,11 @@ import { saveHistory } from "./storage";
 import { saveLastPlace } from "./storage";
 import { useWeather } from "./useWeather";
 import { WeatherCanvas } from "./WeatherCanvas";
-
 import { useForecast } from "./useForecast";
 import { renderForecast } from "./renderForecast";
 import { errorMessage } from "./errorMessage";
 import { addToHistory } from "./history";
-
+import { getWeatherKind } from "./weatherKind";
 export function App() {
   const [text, setText] = useState("");
   const debouncedText = useDebounce(text, 500);
@@ -80,9 +79,14 @@ export function App() {
       break;
   }
 
+  const kind =
+    weather.status === "success"
+      ? getWeatherKind(weather.data.weather_code)
+      : "unknown";
+
   return (
     <div className="App">
-      <WeatherCanvas />
+      <WeatherCanvas kind={kind} />
       <input value={text} onChange={(e) => setText(e.target.value)} />
       <button onClick={() => setUnit(unit === "C" ? "F" : "C")}>
         Cambiar a {unit === "C" ? "F" : "C"}{" "}
