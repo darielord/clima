@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { moveParticles } from "./particles";
+import { createParticles } from "./particles";
 
 export function WeatherCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -16,16 +18,36 @@ export function WeatherCanvas() {
       return;
     }
 
-    ctx.fillStyle = "skyblue";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const particles = createParticles(60, canvas.width, canvas.height);
 
-    ctx.fillStyle = "yellow";
+    let frameId: number = 0;
 
-    ctx.beginPath();
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.arc(480, 50, 30, 0, Math.PI * 2);
+      ctx.fillStyle = "skyblue";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fill();
+      ctx.fillStyle = "yellow";
+      ctx.beginPath();
+
+      ctx.arc(480, 50, 30, 0, Math.PI * 2);
+      ctx.fill();
+
+      moveParticles(particles, canvas.height);
+
+      for (const particle of particles) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(particle.x, particle.y, 2, 8);
+      }
+      frameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, []);
 
   return <canvas ref={canvasRef} width={560} height={160}></canvas>;
